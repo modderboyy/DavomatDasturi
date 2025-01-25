@@ -1,0 +1,45 @@
+name: DavomatYettilik
+description: Yettilik
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  supabase_flutter: ^2.8.3
+  qr_code_scanner: ^1.0.1
+  logger: ^1.4.0
+  geolocator: ^10.1.0
+  permission_handler: ^11.0.1
+  flutter_styled_toast: ^2.2.1
+  flutter_dotenv: ^5.2.0
+  detect_fake_location: ^2.1.0
+  safe_device: ^1.2.0
+  record: ^4.4.4
+  path_provider: ^2.1.1
+  badges: ^3.1.1
+  pull_to_refresh_flutter3: ^2.0.2
+  audioplayers: ^6.1.0
+  just_audio: ^0.9.43
+  provider: ^6.0.0
+  open_file: ^3.5.10
+  http: ^1.1.0
+  path: ^1.9.0
+  cached_network_image: ^3.0.0
+  file_picker: ^8.1.7    # Fayllarni tanlash uchun
+  audio_session: ^0.1.12   # Audio session ni sozlash uchun
+  image_picker: ^1.1.2
+  tdlib: ^1.6.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+  build_runner: ^2.4.9
+
+flutter:
+  uses-material-design: true
