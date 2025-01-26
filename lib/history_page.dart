@@ -1,8 +1,9 @@
-// history_page.dart
 import 'package:flutter/cupertino.dart';
 import 'package:DavomatYettilik/main.dart';
 import 'package:intl/intl.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
@@ -21,7 +22,19 @@ class _HistoryPageState extends State<HistoryPage> {
   @override
   void initState() {
     super.initState();
+    _loadCachedAttendanceHistory();
     _loadAttendanceHistory();
+  }
+
+  Future<void> _loadCachedAttendanceHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    final cachedHistory = prefs.getString('attendanceHistory');
+    if (cachedHistory != null) {
+      setState(() {
+        attendanceHistory =
+            List<Map<String, dynamic>>.from(jsonDecode(cachedHistory));
+      });
+    }
   }
 
   Future<void> _loadAttendanceHistory() async {
@@ -50,6 +63,7 @@ class _HistoryPageState extends State<HistoryPage> {
           print(
               'HistoryPage: Davomat tarixi yangilandi: ${attendanceHistory.length} ta yozuv');
         });
+        _cacheAttendanceHistory();
       }
     } catch (error) {
       print("Davomat tarixini yuklashda xatolik: $error");
@@ -66,6 +80,11 @@ class _HistoryPageState extends State<HistoryPage> {
       }
       _refreshController.refreshCompleted();
     }
+  }
+
+  Future<void> _cacheAttendanceHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('attendanceHistory', jsonEncode(attendanceHistory));
   }
 
   Future<void> _onRefresh() async {

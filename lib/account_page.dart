@@ -1,6 +1,6 @@
-// account_page.dart
 import 'package:flutter/cupertino.dart';
 import 'package:DavomatYettilik/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -18,7 +18,17 @@ class _AccountPageState extends State<AccountPage> {
   @override
   void initState() {
     super.initState();
+    _loadCachedUserData();
     _loadUserData();
+  }
+
+  Future<void> _loadCachedUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userName = prefs.getString('userName');
+      userRole = prefs.getString('userRole');
+      userAvatarUrl = prefs.getString('userAvatarUrl');
+    });
   }
 
   Future<void> _loadUserData() async {
@@ -42,12 +52,26 @@ class _AccountPageState extends State<AccountPage> {
           print(
               'State yangilandi: userName: $userName, userRole: $userRole, userAvatarUrl: $userAvatarUrl');
         });
+        _cacheUserData();
       }
     } catch (error) {
       print("Foydalanuvchi ma'lumotlarini yuklashda xatolik: $error");
       setState(() {
         message = 'Foydalanuvchi ma\'lumotlarini yuklashda xatolik!';
       });
+    }
+  }
+
+  Future<void> _cacheUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (userName != null) {
+      await prefs.setString('userName', userName!);
+    }
+    if (userRole != null) {
+      await prefs.setString('userRole', userRole!);
+    }
+    if (userAvatarUrl != null) {
+      await prefs.setString('userAvatarUrl', userAvatarUrl!);
     }
   }
 
