@@ -69,7 +69,7 @@ class _HistoryPageState extends State<HistoryPage> {
       print("Davomat tarixini yuklashda xatolik: $error");
       if (mounted) {
         setState(() {
-          message = 'Davomat tarixini yuklashda xatolik!';
+          message = 'Davomat tarixini yuklashda xatolik bor!';
         });
       }
     } finally {
