@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:animate_do/animate_do.dart'; // Import animate_do
 // import 'package:motion/motion.dart'; // Remove unused import: motion
+// modderboy
 
 import 'home_page.dart';
 import 'account_page.dart';
@@ -37,23 +38,26 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp(
-      // Removed MotionApp wrapper
-      title: 'Davomat Tizimi',
-      theme: const CupertinoThemeData(
-        brightness: Brightness.light,
-        primaryColor: CupertinoColors.activeBlue,
-        barBackgroundColor: CupertinoColors.white,
-        scaffoldBackgroundColor: CupertinoColors.systemGrey6,
-        textTheme: CupertinoTextThemeData(
-          primaryColor: CupertinoColors.black,
-          textStyle: TextStyle(
-            fontFamily: '.SF UI Display',
-            color: CupertinoColors.black,
+    return ScaffoldMessenger(
+      // ✅ ADD ScaffoldMessenger HERE to wrap CupertinoApp
+      child: CupertinoApp(
+        // Removed MotionApp wrapper
+        title: 'Davomat Tizimi',
+        theme: const CupertinoThemeData(
+          brightness: Brightness.light,
+          primaryColor: CupertinoColors.activeBlue,
+          barBackgroundColor: CupertinoColors.white,
+          scaffoldBackgroundColor: CupertinoColors.systemGrey6,
+          textTheme: CupertinoTextThemeData(
+            primaryColor: CupertinoColors.black,
+            textStyle: TextStyle(
+              fontFamily: '.SF UI Display',
+              color: CupertinoColors.black,
+            ),
           ),
         ),
+        home: const MainPage(),
       ),
-      home: const MainPage(),
     );
   }
 }

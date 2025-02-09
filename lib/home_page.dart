@@ -1,4 +1,3 @@
-// home_page.dart
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
@@ -31,6 +30,7 @@ class _HomePageState extends State<HomePage> {
   double? expectedLatitude;
   double? expectedLongitude;
   double distanceThreshold = 100;
+  String? _selectedCompanyId; // Assuming you have companyId available here
 
   @override
   void reassemble() {
@@ -45,39 +45,80 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _loadUserData();
+    _loadCompanyDataPgSQL(_selectedCompanyId ??
+        'your_default_company_id'); // Replace 'your_default_company_id' with actual companyId if available
   }
 
   Future<void> _loadUserData() async {
     try {
       final userId = supabase.auth.currentUser!.id;
 
-      // Get QR codes
-      final qrData = await supabase
-          .from('qrcodes')
-          .select('kelish_qrcode, ketish_qrcode')
-          .eq('xodim_id', userId)
-          .maybeSingle();
+      // Get QR codes (This part might be moved to PL/pgSQL function if needed)
+      // final qrData = await supabase
+      //     .from('qrcodes')
+      //     .select('kelish_qrcode, ketish_qrcode')
+      //     .eq('xodim_id', userId)
+      //     .maybeSingle();
 
-      // Get location data
-      final locationData = await supabase
-          .from('location')
-          .select('latitude, longitude, distance')
-          .maybeSingle();
+      // Get location data (This part might be moved to PL/pgSQL function if needed)
+      // final locationData = await supabase
+      //     .from('location')
+      //     .select('latitude, longitude, distance')
+      //     .maybeSingle();
 
-      if (mounted) {
-        setState(() {
-          kelishQrCode = qrData?['kelish_qrcode'] as String?;
-          ketishQrCode = qrData?['ketish_qrcode'] as String?;
-          expectedLatitude = locationData?['latitude'] as double?;
-          expectedLongitude = locationData?['longitude'] as double?;
-          distanceThreshold = (locationData?['distance'] as num?)?.toDouble() ??
-              100; //default value if null
-        });
-      }
+      // if (mounted) {
+      //   setState(() {
+      //     kelishQrCode = qrData?['kelish_qrcode'] as String?;
+      //     ketishQrCode = qrData?['ketish_qrcode'] as String?;
+      //     expectedLatitude = locationData?['latitude'] as double?;
+      //     expectedLongitude = locationData?['longitude'] as double?;
+      //     distanceThreshold = (locationData?['distance'] as num?)?.toDouble() ??
+      //         100; //default value if null
+      //   });
+      // }
     } catch (error) {
       print("Error loading user data: $error");
       setState(() {
         message = 'Foydalanuvchi ma\'lumotlarini yuklashda xatolik!';
+      });
+    }
+  }
+
+  Future<void> _loadCompanyDataPgSQL(String companyId) async {
+    try {
+      final response = await supabase
+          .rpc('get_company_data_pgsql', // PL/pgSQL function name
+              params: {'company_id': companyId}) // Pass companyId as argument
+          .select(); // .execute() o'rniga .select() ishlatildi
+
+      // No status code check needed for raw list response
+      // Assuming successful response if no exception is thrown
+      final data =
+          response; // response is already the data (List<Map<String, dynamic>>)
+
+      if (data != null && data is List && data.isNotEmpty) {
+        // Check if data is valid list and not empty
+        final companyData =
+            data.first; // Assuming function returns a list with one map
+        setState(() {
+          kelishQrCode = companyData['qr_codes']?['kelish_qrcode'] as String?;
+          ketishQrCode = companyData['qr_codes']?['ketish_qrcode'] as String?;
+          expectedLatitude = companyData['location']?['latitude'] as double?;
+          expectedLongitude = companyData['location']?['longitude'] as double?;
+          distanceThreshold =
+              (companyData['location']?['distance'] as num?)?.toDouble() ?? 100;
+        });
+      } else {
+        print("RPC error: Response data is invalid or empty: $response");
+        setState(() {
+          message =
+              'Kompaniya ma\'lumotlarini yuklashda xatolik!'; // Indicate data issue
+        });
+      }
+    } catch (error) {
+      print("Error loading company data: $error");
+      setState(() {
+        message = 'Kompaniya ma\'lumotlarini yuklashda xatolik!';
       });
     }
   }
