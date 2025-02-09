@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:animate_do/animate_do.dart'; // Import animate_do
 // import 'package:motion/motion.dart'; // Remove unused import: motion
-
+//salom
 import 'home_page.dart';
 import 'account_page.dart';
 import 'history_page.dart';
